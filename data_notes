@@ -1,0 +1,12 @@
+removed the following datasets because they were not downloaded:
+
+folders:
+fastMRI_prostate_T2_IDS_199_217
+fastMRI_prostate_T2_IDS_294_312
+
+files:
+fastMRI_prostate_T2_IDS_237_255/file_prostate_AXT2_251.h5
+fastMRI_prostate_T2_IDS_021_040/file_prostate_AXT2_032.h5
+fastMRI_prostate_T2_IDS_275_293/file_prostate_AXT2_291.h5
+fastMRI_prostate_T2_IDS_275_293/file_prostate_AXT2_287.h5
+

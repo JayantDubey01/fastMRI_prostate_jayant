@@ -32,7 +32,8 @@ def train(model, optimizer, scheduler, train_loader, device):
     - raw_preds (Tensor): Concatenated raw predictions.
     """
 
-    total_loss_train, total_num, all_out, all_labels = 0.0, 0,  [], []  
+    total_loss_train, total_num, all_out, all_labels = 0.0, 0,  [], []
+    # t
     for _, (data, target) in enumerate(train_loader):
         data, target = data.to(device), torch.flatten(target.to(device))  
         optimizer.zero_grad()                                            
@@ -111,6 +112,7 @@ def train_network(config):
     device = torch.device("cuda" if use_cuda else "cpu")                
     print('Found this device:{}'.format(device))
     
+    # train_loader makes a class object from the datasheet
     train_loader, valid_loader, test_loader = load_data(config['data']['datasheet'], config["data"]["data_location"], int(config['data']['norm_type']),  config['training']['augment'], config['training']['saveims'], config['model_args']['rundir'])
     print('Lengths: Train:{}, Val:{}, Test:{}'.format(len(train_loader), len(valid_loader), len(test_loader)))  
     

@@ -54,20 +54,22 @@ class Dataset(data.Dataset):
             data = data[data['data_split'] == 'test'].reset_index(drop = True) 
             self.aug = 0
 
+        # Reads slice_label CSV file
         for i in range(0,len(data)):           
             pt_id = data['fastmri_pt_id'].iloc[i]  
             file_t2 = data['fastmri_rawfile'].iloc[i]  
             fol_t2 =  os.path.join(data['folder'].iloc[i])
             path_t2 = os.path.join(datapath, fol_t2, file_t2)
-            self.paths_t2.append(path_t2)                          
+            self.paths_t2.append(path_t2) # Makes a list of all the datapaths to each file from the dataset folder CALLED PATH_T2              
             label_PIRADS = data['PIRADS'].iloc[i]                   
             label = (label_PIRADS > 2).astype(np.int32)            
-            self.labels.append(int(label))                         
+            self.labels.append(int(label))  # Makes a list of all the labels associated with the file from the dataset folder CALLED LABELS                         
             num = data['fastmri_pt_id'].iloc[i]                    
             self.nums.append(int(num))                             
             slice_num = data['slice'].iloc[i] - 1 # slice numbers are for DICOMs, make pythonic                     
             self.slice_num.append(int(slice_num))                  
 
+        # Makes a range of allowable weights mean - (1-mean)(?) BASED ON MEAN OF THE LABELS
         self.labels = np.asarray(self.labels)                       
         neg_weight = np.mean(self.labels)                          
         self.weights = [neg_weight, 1 - neg_weight]                
@@ -91,13 +93,24 @@ class Dataset(data.Dataset):
         loss = F.binary_cross_entropy_with_logits(prediction, target, weight=Variable(weights_tensor)) 
         return loss
 
+    # returns the slice, and the slice's label
     def __getitem__(self, index):
 
-        load_path_t2 = self.paths_t2[index]    
-        with h5py.File(load_path_t2, "r") as hf:
-            im_recon_320 = hf["reconstruction_rss"][:]   
-        im_recon_320 = im_recon_320[self.slice_num[index],:,:]
-        
+        load_path_t2 = self.paths_t2[index]
+
+        try: 
+            with h5py.File(load_path_t2, "r") as hf:
+                im_recon_320 = hf["reconstruction_rss"][:]   
+            im_recon_320 = im_recon_320[self.slice_num[index],:,:]
+        except OSError as e:
+            print(f"Error opening file: {load_path_t2}")
+            print(f"OSError: {e}")
+        except KeyError as e:
+            print(f"Key error in file {load_path_t2}: {e}")
+        except Exception as e:
+            print(f"Unexpected error with file {load_path_t2}: {e}")
+
+
         if random.randint(0, 100) > 30 and self.aug: 
             im_recon_320, op_list = augment_image_t2(im_recon_320)
         else:

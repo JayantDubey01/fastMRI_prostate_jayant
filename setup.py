@@ -3,6 +3,7 @@ from setuptools import setup
 setup(
     name='fastMRI Prostate',
     version='1.0',
+    packages=["fastmri_prostate", "DL_reconstruction", "fastmri_prostate_classification"],
     description='A large scale dataset and reconstruction script of both raw prostate MRI measurements and images',
     install_requires=[
         'h5py==3.7.0',
@@ -16,7 +17,7 @@ setup(
         'PyYAML>=5.3.1',
         'torchmetrics>=0.5.1',
         'pandas>=1.3.4',
-        'opencv-python==4.5.5',
+        'opencv-python==4.5.5.64',
         'scipy>=1.6.2'
     ],
     python_requires='>=3.9'
